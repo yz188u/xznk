@@ -51,16 +51,6 @@ local Window = WindUI:CreateWindow({
 
     --Background = "rbxassetid://13511292247", -- rbxassetid only
     HasOutline = false,
-    -- remove it below if you don't want to use the key system in your script.
-    KeySystem = { 
-        Key = { "SubsToXZuyaX", "ilovekira", "Javier Asrahan", "w", "PermKey_0000", "Nobi1705", "EliasGG", "VengadorPrime", "Yaqama", "KEY_Perm10", "pgu245", "AKiLyAs", "NagiTheTester", "LunaPerm", "Diddy", "Wans" },
-        Note = "Press Get Key Pls!, I Need Money T_T!",
-         Thumbnail = {
-          Image = "rbxassetid://122990312323150", -- rbxassetid only
-         },
-        URL = "https://discord.gg/xzuyaxhub", -- remove this if the key is not obtained from the link.
-        SaveKey = false, -- optional
-    },
 })
 
 local Tabs = {
@@ -72,7 +62,7 @@ local Tabs = {
     EventTab = Window:Tab({ Title = "Event", Icon = "gift", Desc = "this is just a trigger to open the event menu." }),
     VisualTab = Window:Tab({ Title = "Visual", Icon = "scan-eye", Desc = "not too important." }),
     b = Window:Divider(),
-    ServerTab = Window:Tab({ Title = "Server", Icon = "server", Desc = "Subscribe to XZuyaX! " }),
+ l   ServerTab = Window:Tab({ Title = "Server", Icon = "server", Desc = "Subscribe to XZuyaX! " }),
     WindowTab = Window:Tab({ Title = "Window and File Configuration", Icon = "settings", Desc = "Manage window settings and file configurations." }),
     CreateThemeTab = Window:Tab({ Title = "Create Theme", Icon = "palette", Desc = "Design and apply custom themes." }),
     be = Window:Divider(),
