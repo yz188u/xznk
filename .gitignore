@@ -1,14 +1,2121 @@
-# A fast, small, safe, gradually typed embeddable scripting language derived from Lua
-#
-# https://github.com/luau-lang/luau
-# https://luau.org/
+local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/XZuuyaX/Wind/refs/heads/main/WindUI/dist/main.lua"))()
 
-# Code coverage
-coverage.out
+local function gradient(text, startColor, endColor)
+    local result = ""
+    local length = #text
 
-# Profiling
-profile.out
-profile.svg
+    for i = 1, length do
+        local t = (i - 1) / math.max(length - 1, 1)
+        local r = math.floor((startColor.R + (endColor.R - startColor.R) * t) * 255)
+        local g = math.floor((startColor.G + (endColor.G - startColor.G) * t) * 255)
+        local b = math.floor((startColor.B + (endColor.B - startColor.B) * t) * 255)
 
-# Time trace
-trace.json
+        local char = text:sub(i, i)
+        result = result .. string.format("<font color=\"rgb(%d, %d, %d)\">%s</font>", r, g, b, char)
+    end
+
+    return result
+end
+
+-- Tombol kecil pojok (Logo Atlas)
+local gui = Instance.new("ScreenGui")
+local logoBtn = Instance.new("ImageButton")
+local corner = Instance.new("UICorner")
+
+gui.Parent = game.CoreGui
+gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+logoBtn.Parent = gui
+logoBtn.BackgroundTransparency = 1
+logoBtn.BorderSizePixel = 0
+logoBtn.Position = UDim2.new(0, 10, 0.5, -22)
+logoBtn.Size = UDim2.new(0,100, 0, 70)
+logoBtn.Image = "http://www.roblox.com/asset/?id=86136928465509"
+logoBtn.Draggable = true
+
+corner.CornerRadius = UDim.new(1, 0)
+corner.Parent = logoBtn
+
+logoBtn.MouseButton1Down:Connect(function()
+    game:GetService("VirtualInputManager"):SendKeyEvent(true, Enum.KeyCode.G, false, game)
+end)
+
+local Window = WindUI:CreateWindow({
+    Title = gradient("XZuyaX's HUB", Color3.fromHex("#00FF87"), Color3.fromHex("#60EFFF")), 
+    Icon = "crown",
+    Author = "Zuya",
+    Folder = "XZuyaX's Hub",
+    Size = UDim2.fromOffset(435, 345),
+    Transparent = true,
+    Theme = "Dark",
+
+    --Background = "rbxassetid://13511292247", -- rbxassetid only
+    HasOutline = false
+    },
+})
+
+local Tabs = {
+    InfoTab = Window:Tab({ Title = "Home", Icon = "house", Desc = "Information about the creator." }),
+    ButtonTab = Window:Tab({ Title = "Main", Icon = "computer", Desc = "Contains interactive buttons for various actions." }),
+    ToggleTab = Window:Tab({ Title = "Rollback", Icon = "refresh-cw", Desc = "Rollback for Inf Spin." }),
+    BallTab = Window:Tab({ Title = "Ball hack", Icon = "circle-play", Desc = "Hack ball content." }),
+    MiscTab = Window:Tab({ Title = "Misc", Icon = "align-justify", Desc = "Subscribe to XZuyaX! " }),
+    EventTab = Window:Tab({ Title = "Event", Icon = "gift", Desc = "this is just a trigger to open the event menu." }),
+    VisualTab = Window:Tab({ Title = "Visual", Icon = "scan-eye", Desc = "not too important." }),
+    b = Window:Divider(),
+    ServerTab = Window:Tab({ Title = "Server", Icon = "server", Desc = "Subscribe to XZuyaX! " }),
+    WindowTab = Window:Tab({ Title = "Window and File Configuration", Icon = "settings", Desc = "Manage window settings and file configurations." }),
+    CreateThemeTab = Window:Tab({ Title = "Create Theme", Icon = "palette", Desc = "Design and apply custom themes." }),
+    be = Window:Divider(),
+}
+
+Window:SelectTab(1)
+
+-- GUI Draggable
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "StyleChangerGui"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = game:GetService("CoreGui")
+
+local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(0, 200, 0, 180)
+Frame.Position = UDim2.new(0.5, -100, 0.5, -90)
+Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Frame.BorderSizePixel = 0
+Frame.Visible = false
+Frame.Active = true
+Frame.Draggable = true
+Frame.Parent = ScreenGui
+
+-- Judul
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Text = "Choose Style"
+titleLabel.Size = UDim2.new(1, 0, 0, 25)
+titleLabel.BackgroundTransparency = 1
+titleLabel.TextColor3 = Color3.new(1, 1, 1)
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextSize = 16
+titleLabel.Parent = Frame
+
+-- Container buat button style
+local ButtonContainer = Instance.new("Frame")
+ButtonContainer.Size = UDim2.new(1, 0, 1, -30)
+ButtonContainer.Position = UDim2.new(0, 0, 0, 30)
+ButtonContainer.BackgroundTransparency = 1
+ButtonContainer.Parent = Frame
+
+local UIListLayout = Instance.new("UIListLayout")
+UIListLayout.Parent = ButtonContainer
+UIListLayout.Padding = UDim.new(0, 10)
+UIListLayout.FillDirection = Enum.FillDirection.Vertical
+UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Top
+
+local styles = { "Kaiser", "Kurona", "King" }
+
+for _, styleName in ipairs(styles) do
+    local btn = Instance.new("TextButton")
+    btn.Text = styleName
+    btn.Size = UDim2.new(0, 160, 0, 30)
+    btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 14
+    btn.Parent = ButtonContainer
+
+    btn.MouseButton1Click:Connect(function()
+        local stats = game:GetService("Players").LocalPlayer:FindFirstChild("PlayerStats")
+        if stats and stats:FindFirstChild("Style") then
+            stats.Style.Value = styleName
+
+            WindUI:Notify({
+                Title = "Style Changed",
+                Content = "Now using style: " .. styleName,
+                Icon = "sparkles",
+                Duration = 5,
+            })
+        end
+    end)
+end
+
+Tabs.ButtonTab:Section({ Title = "▸ Team & Role Selection" })
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local Knit = ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Knit")
+local TeamService = Knit.Services:WaitForChild("TeamService")
+local selectEvent = TeamService.RE.Select
+local teamsFolder = ReplicatedStorage:WaitForChild("Teams")
+
+local selectedTeam = "Home" -- or "Away"
+local selectedPosition = "RW" -- CF, RW, LW, CM, GK
+local autoSelectEnabled = false
+local connection
+
+-- Check if the player's name matches the ObjectValue in the position
+local function HasPosition()
+	local team = teamsFolder:FindFirstChild(selectedTeam .. "Team")
+	if not team then return false end
+
+	local role = team:FindFirstChild(selectedPosition)
+	if not role then return false end
+
+	-- Compare ObjectValue with local player
+	return role.Value == player
+end
+
+-- Toggle spam on or off
+local function ToggleAutoSelect(state)
+	autoSelectEnabled = state
+
+	if state then
+		connection = RunService.RenderStepped:Connect(function()
+			local currentTeam = player.Team and player.Team.Name or "Visitor"
+
+			if currentTeam == "Visitor" or not HasPosition() then
+				selectEvent:FireServer(selectedTeam, selectedPosition)
+			end
+		end)
+	else
+		if connection then
+			connection:Disconnect()
+			connection = nil
+		end
+	end
+end
+
+-- Example Dropdown & Toggle for UI Library
+Tabs.ButtonTab:Dropdown({
+	Title = "Select Team",
+	Desc = "Choose team",
+	Values = { "Home", "Away" },
+	Value = "Home",
+	Callback = function(option)
+		selectedTeam = option
+	end
+})
+
+Tabs.ButtonTab:Dropdown({
+	Title = "Select Position",
+	Desc = "Choose your role",
+	Values = { "CF", "CM", "RW", "LW", "GK" },
+	Value = "RW",
+	Callback = function(option)
+		selectedPosition = option
+	end
+})
+
+Tabs.ButtonTab:Toggle({
+	Title = "Auto Select Role",
+	Default = false,
+	Callback = function(state)
+		ToggleAutoSelect(state)
+	end
+})
+
+Tabs.ButtonTab:Section({ Title = "▸ Custom Shot" })
+
+Tabs.ButtonTab:Input({
+    Title = "Input Keybind",
+    PlaceholderText = "Default: T",
+    Callback = function(text)
+        local success, keycode = pcall(function()
+            return Enum.KeyCode[text:upper()]
+        end)
+
+        if success and keycode then
+            shared.SnakeShootKeybind = keycode
+        else
+            warn("Invalid keybind: " .. tostring(text))
+        end
+    end
+})
+
+Tabs.ButtonTab:Button({
+    Title = "SnakeShoot",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/yz188u/SnkSht/main/main.luau"))()
+    end
+})
+
+
+Tabs.ButtonTab:Section({ Title = "▸ Game Enhancers" })
+
+local AutoSlideV1 = {}
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local BallService = ReplicatedStorage.Packages.Knit.Services.BallService.RE
+local LocalPlayer = Players.LocalPlayer
+
+local autoSlideOn = false
+local slideDistance = 25
+local lastSlide = 0
+local cooldown = 0
+
+function AutoSlideV1.SetActive(state)
+	autoSlideOn = state
+end
+
+function AutoSlideV1.Start()
+	spawn(function()
+		while true do
+			task.wait(0.2)
+			if not autoSlideOn then continue end
+
+			local holder = nil
+			for _, player in pairs(Players:GetPlayers()) do
+				if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("Football") then
+					holder = player
+					break
+				end
+			end
+
+			if holder and holder.Character and holder.Character:FindFirstChild("HumanoidRootPart") then
+				local myChar = LocalPlayer.Character
+				if myChar and myChar:FindFirstChild("HumanoidRootPart") then
+					local dist = (myChar.HumanoidRootPart.Position - holder.Character.HumanoidRootPart.Position).Magnitude
+					if dist <= slideDistance and tick() - lastSlide >= cooldown then
+						BallService.Slide:FireServer()
+						lastSlide = tick()
+					end
+				end
+			end
+		end
+	end)
+end
+
+Tabs.ButtonTab:Toggle({
+	Title = "Aura Slide",
+        Desc = [[ 
+Get Close to the Enemy 
+'You can combine it with Ball Expander'
+]],
+	Default = false,
+	Callback = function(state)
+		AutoSlideV1.SetActive(state)
+	end
+})
+
+AutoSlideV1.Start()
+
+-- Buat "modul" AutoSlide di dalam satu file
+local AutoSlide = {}
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local BallService = ReplicatedStorage.Packages.Knit.Services.BallService.RE
+local LocalPlayer = Players.LocalPlayer
+local Workspace = game:GetService("Workspace")
+
+local autoSlideOn = false
+local slideDistance = 25
+local lastSlide = 0
+local cooldown = 0
+local previousDribbling = {}
+
+function AutoSlide.SetActive(state)
+    autoSlideOn = state
+end
+
+function AutoSlide.Start()
+    spawn(function()
+        while true do
+            task.wait()
+            if not autoSlideOn then continue end
+
+            local holder = nil
+            for _, player in pairs(Players:GetPlayers()) do
+                if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("Football") then
+                    holder = player
+                    break
+                end
+            end
+
+            if holder and holder.Character and holder.Character:FindFirstChild("HumanoidRootPart") then
+                local myChar = LocalPlayer.Character
+                if myChar and myChar:FindFirstChild("HumanoidRootPart") then
+                    local dist = (myChar.HumanoidRootPart.Position - holder.Character.HumanoidRootPart.Position).Magnitude
+
+                    local wsChar = Workspace:FindFirstChild(holder.Name)
+                    local dribbling = wsChar and wsChar:FindFirstChild("Values") and wsChar.Values:FindFirstChild("Dribbling")
+
+                    if dribbling then
+                        local prev = previousDribbling[holder.Name]
+                        local now = dribbling.Value
+
+                        if prev == true and now == false and dist <= slideDistance and tick() - lastSlide >= cooldown then
+                            task.delay(0, function()
+                                if holder.Character and holder.Character:FindFirstChild("Football") then
+                                    BallService.Slide:FireServer()
+                                    lastSlide = tick()
+                                end
+                            end)
+                        end
+
+                        previousDribbling[holder.Name] = now
+                    end
+                end
+            end
+        end
+    end)
+end
+
+Tabs.ButtonTab:Toggle({
+    Title = "Aura SlideV2",
+    Desc = [[ 
+Get Close to the Enemy 
+'This will auto slide when the enemy has dribbled.'
+]],
+    Default = false,
+    Callback = function(state)
+        AutoSlide.SetActive(state)
+    end
+})
+
+local Players = game:GetService("Players")
+local RS = game:GetService("ReplicatedStorage")
+local AbilityService = RS.Packages.Knit.Services.AbilityService.RE.Ability
+
+local autoSteal = false
+
+local function triggerAbility(targetChar)
+    local args = {
+        [1] = "DestroyersDomain",
+        [2] = {
+            ["Enemy"] = targetChar
+        }
+    }
+    AbilityService:FireServer(unpack(args))
+end
+
+
+local function checkAll()
+    if not autoSteal then return end
+
+
+    for _, player in pairs(Players:GetPlayers()) do
+        local char = player.Character
+        if char and char:FindFirstChild("Football") then
+            triggerAbility(char)
+        end
+    end
+
+    local ai = workspace:FindFirstChild("AI")
+    if ai then
+        local gkAway = ai:FindFirstChild("Away") and ai.Away:FindFirstChild("GK")
+        local gkHome = ai:FindFirstChild("Home") and ai.Home:FindFirstChild("GK")
+
+        if gkAway and gkAway:FindFirstChild("Football") then
+            triggerAbility(gkAway)
+        end
+
+        if gkHome and gkHome:FindFirstChild("Football") then
+            triggerAbility(gkHome)
+        end
+    end
+end
+
+-- Toggle UI
+Tabs.ButtonTab:Toggle({
+    Title = "Auto Steal 100%",
+    Desc = "Must have Reo",
+    Icon = "target",
+    Default = false,
+    Callback = function(state)
+        autoSteal = state
+    end
+})
+
+-- Loop pengecekan
+task.spawn(function()
+    while true do
+        task.wait(0.5)
+        checkAll()
+    end
+end)
+
+-- Listener global hapus Attachment/Attachment1 kapanpun bola muncul
+task.spawn(function()
+    local Workspace = game:GetService("Workspace")
+    local Players = game:GetService("Players")
+
+    while true do
+        -- Cek bola di Workspace
+        local football = Workspace:FindFirstChild("Football")
+        if football then
+            for _, name in {"Attachment", "Attachment1"} do
+                local att = football:FindFirstChild(name)
+                if att then att:Destroy() end
+            end
+        end
+
+        -- Cek bola di semua karakter pemain
+        for _, plr in pairs(Players:GetPlayers()) do
+            if plr.Character then
+                local fb = plr.Character:FindFirstChild("Football")
+                if fb then
+                    for _, name in {"Attachment", "Attachment1"} do
+                        local att = fb:FindFirstChild(name)
+                        if att then att:Destroy() end
+                    end
+                end
+            end
+        end
+        task.wait(0.2)
+    end
+end)
+
+-- Tombol Auto Goal
+Tabs.ButtonTab:Toggle({
+    Title = "Auto Goal",
+    Desc = "OP but still have Bug",
+    Icon = "target",
+    Default = false,
+    Callback = function(value)
+        _G.AutoCombo = value
+
+        local Players = game:GetService("Players")
+        local ReplicatedStorage = game:GetService("ReplicatedStorage")
+        local Workspace = game:GetService("Workspace")
+        local player = Players.LocalPlayer
+        local BallService = ReplicatedStorage.Packages.Knit.Services.BallService.RE
+        local Goals = ReplicatedStorage:WaitForChild("Goals")
+        local TweenService = game:GetService("TweenService")
+        local lastGoalValue = {Away = Goals.Away.Value, Home = Goals.Home.Value}
+        local waitingAfterGoal = false
+
+        -- Noclip function
+        local function toggleNoclip(state)
+            local RunService = game:GetService("RunService")
+            if state then
+                _G.NoclipConnection = RunService.Stepped:Connect(function()
+                    if player.Character then
+                        for _, part in pairs(player.Character:GetDescendants()) do
+                            if part:IsA("BasePart") and part.CanCollide then
+                                part.CanCollide = false
+                            end
+                        end
+                    end
+                end)
+            elseif _G.NoclipConnection then
+                _G.NoclipConnection:Disconnect()
+                _G.NoclipConnection = nil
+                -- Balikin CanCollide = true
+                if player.Character then
+                    for _, part in pairs(player.Character:GetDescendants()) do
+                        if part:IsA("BasePart") then
+                            part.CanCollide = true
+                        end
+                    end
+                end
+            end
+        end
+
+        -- Fungsi bantu lainnya
+        local function waitForCharacter()
+            repeat task.wait() until player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+            return player.Character, player.Character:FindFirstChild("HumanoidRootPart")
+        end
+
+        local function getTeam()
+            return player.Team and player.Team.Name or "Unknown"
+        end
+
+        local function getGoalCFrame()
+            if getTeam() == "Home" then
+                return CFrame.new(-242.376602, 10.8505239, -49.222084)
+            else
+                return CFrame.new(319.823425, 10.8505239, -49.222084)
+            end
+        end
+
+        local function findFootball()
+            for _, plr in pairs(Players:GetPlayers()) do
+                if plr.Character and plr.Character:FindFirstChild("Football") then
+                    return plr.Character.Football, plr
+                end
+            end
+            local fb = Workspace:FindFirstChild("Football")
+            if fb then return fb, nil end
+            return nil, nil
+        end
+
+        local function tweenToGoalThenTeleport()
+    local goalPos = getGoalCFrame().Position + Vector3.new(0, 1.2, 0)
+
+    -- Step 1: Nendang dulu sebanyak 3 kali
+    for i = 1, 3 do
+        BallService.Shoot:FireServer(110, nil, Vector3.zero)
+        task.wait(0.05)
+    end
+
+    -- Step 2: Langsung teleport bola ke gawang meskipun belum pindah ke Workspace
+    for i = 1, 5 do
+        local fb, _ = findFootball()
+        if fb then
+            fb.CFrame = CFrame.new(goalPos)
+        end
+        task.wait(0.05)
+    end
+end
+
+        if value then
+            toggleNoclip(false)
+            _G.ComboThread = task.spawn(function()
+                while _G.AutoCombo do
+                    local character, root = waitForCharacter()
+                    local football, owner = findFootball()
+
+                    if Goals.Away.Value ~= lastGoalValue.Away or Goals.Home.Value ~= lastGoalValue.Home then
+                        waitingAfterGoal = true
+                        lastGoalValue.Away = Goals.Away.Value
+                        lastGoalValue.Home = Goals.Home.Value
+                        task.delay(9, function()
+                            waitingAfterGoal = false
+                        end)
+                    end
+
+                    if football then
+                        if football:IsDescendantOf(character) then
+                            tweenToGoalThenTeleport()
+                        end
+
+                        local charValue = football:FindFirstChild("Char")
+                        local shouldTeleport = false
+
+                        if football.Parent == Workspace then
+                            if (not charValue) or (charValue.Value ~= character) then
+                                shouldTeleport = true
+                            elseif charValue.Value == character and not waitingAfterGoal then
+                                shouldTeleport = true
+                            end
+                        elseif owner and owner.Team ~= player.Team then
+                            local enemyHRP = owner.Character and owner.Character:FindFirstChild("HumanoidRootPart")
+                            if enemyHRP and not waitingAfterGoal then
+                                root.CFrame = CFrame.new(enemyHRP.Position + Vector3.new(0, 0.8, 0))
+                                BallService.Slide:FireServer(owner)
+                            end
+                        end
+
+                        if shouldTeleport and not waitingAfterGoal and not football:IsDescendantOf(character) then
+                            root.CFrame = CFrame.new(football.Position + Vector3.new(0, 1.2, 0))
+                        end
+                    end
+
+                    task.wait(0.1)
+                end
+            end)
+        else
+            if _G.ComboThread then
+                task.cancel(_G.ComboThread)
+                _G.ComboThread = nil
+            end
+            toggleNoclip(false)
+        end
+    end
+})
+
+Tabs.ButtonTab:Button({
+    Title = "Money Farm",
+    Desc = "Must Have Reo/Kurona | Use at ur own Risk.", 
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/XZuuyaX/MoneyFarm/refs/heads/main/script.lua"))()
+    end
+})
+
+Tabs.ButtonTab:Button({
+    Title = "Money Farm V2 | Faster",
+    Desc = "For high end devices, Cz it's Very Laggy.", 
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/yz188u/MFarm/refs/heads/main/faster.luau"))()
+    end
+})
+
+Tabs.ButtonTab:Toggle({
+    Title = "Infinite Awakening",
+    Icon = "infinity", 
+    Desc = "Must have Reo",
+    Default = false,
+    Callback = function(enabled)
+        local player = game:GetService("Players").LocalPlayer
+        local stats = player:FindFirstChild("PlayerStats")
+        if not stats then return end
+
+        local inAwakening = stats:FindFirstChild("InAwakening")
+        local style = stats:FindFirstChild("Style")
+        if not inAwakening or not style then return end
+
+        -- Aktifkan atau nonaktifkan Awakening
+        inAwakening.Value = enabled
+        Frame.Visible = enabled
+
+        -- Selalu tampilkan notifikasi saat toggle ON
+        if enabled then
+            task.delay(0.1, function()
+                WindUI:Notify({
+                    Title = "Heads Up!",
+                    Content = "Infinite Awakening only works on: Kaiser, Kurona and King.",
+                    Icon = "circle-alert",
+                    Duration = 6,
+                })
+            end)
+        end
+    end
+})
+
+Tabs.ButtonTab:Button({
+    Title = "Infinite Stamina",
+    Desc = "Activate Infinite Stamina",
+    Callback = function()
+        task.spawn(function()
+            local player = game:GetService("Players").LocalPlayer
+            while task.wait() do
+                if player and player:FindFirstChild("PlayerStats") then
+                    local stats = player.PlayerStats
+                    if stats:FindFirstChild("Stamina") then
+                        stats.Stamina.Value = math.huge
+                    end
+                end
+            end
+        end)
+        print("Infinite Stamina activated!")
+    end
+})
+
+Tabs.ButtonTab:Button({
+    Title = "No Cooldown",
+    Desc = "Only works on some executors",
+    Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/XZuuyaX/NoCD/refs/heads/main/Main", true))() end
+})
+
+Tabs.ButtonTab:Section({ Title = "▸ Style [Go To Misc Tab & Flow Features" })
+
+Tabs.ButtonTab:Toggle({
+    Title = "Get Flow Buff | Inf Flow",
+    Icon = "flame",
+    Default = false, -- Saat toggle awalnya mati
+    Callback = function(state)
+        local player = game:GetService("Players").LocalPlayer
+        if player and player:FindFirstChild("PlayerStats") and player.PlayerStats:FindFirstChild("InFlow") then
+            player.PlayerStats.InFlow.Value = state
+        end
+    end
+})
+
+Tabs.ButtonTab:Dropdown({
+    Title = "FLOW CHANGER",
+    Desc = "Must have Reo", 
+    Values = { "Homeless Man", "Godspeed", "Awakened Genius", "Destructive Impulses", "Emperor", "Soul Harvester", "Prodigy", "Dribbler", "Bee Freestyle", "Snake", "Trap", "Wild Card", "Chameleon", "Demon Wings", "Crow", "King's Instinct", "Monster", "Buddha's Blessing", "Genius", "Gale Burst", "Lightning", "Ice", "Puzzle"},
+    Value = "Default",
+    Callback = function(option)
+        local player = game:GetService("Players").LocalPlayer
+        if player and player:FindFirstChild("PlayerStats") then
+            player.PlayerStats.Flow.Value = option
+            print("Flow Changed To:", option)
+        else
+            warn("PlayerStats not found!")
+        end
+    end
+})
+
+Tabs.ButtonTab:Section({ Title = "▸ Dribble Controls" })
+
+local AutoDribbleLoaded = false
+
+Tabs.ButtonTab:Toggle({
+    Title = "Auto Dribble",
+    Desc = "Not Perfect!",
+    Default = false,
+    Callback = function(state)
+        if state then
+            if not AutoDribbleLoaded then
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/XZuuyaX/Auto-Dribble/refs/heads/main/Main.lua", true))()
+                AutoDribbleLoaded = true
+            end
+            getgenv().AutoDribbleSettings.Enabled = true
+        else
+            getgenv().AutoDribbleSettings.Enabled = false
+        end
+        print("Auto Dribble: " .. tostring(getgenv().AutoDribbleSettings.Enabled))
+    end
+})
+
+Tabs.ButtonTab:Input({
+    Title = "Dribble Range",
+    Default = "22",
+    Values = "Enter Dribble Range",
+    PlaceholderText = "Enter Dribble Range",
+    Callback = function(input)
+        getgenv().AutoDribbleSettings.range = tonumber(input) or 22
+        print("Range changed to: " .. getgenv().AutoDribbleSettings.range)
+    end
+})
+
+Tabs.ButtonTab:Section({ Title = "▸ POWER SETTINGS | MOBILE" })
+
+local UIS = game:GetService("UserInputService")
+local RS = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+
+local player = Players.LocalPlayer
+local shootButton = player.PlayerGui.Mobile.Ball.Shoot
+
+local maxPower = 180
+local toggleEnabled = false
+local shootConnection -- buat nyimpen koneksi
+
+-- Input Power
+Tabs.ButtonTab:Input({
+    Title = "Input Power",
+    Desc = "Default: 180",
+    Default = "",
+    PlaceholderText = "Enter number (ex: 500)",
+    Callback = function(input)
+        local num = tonumber(input)
+        if num then
+            maxPower = num
+            print("Max power set to:", maxPower)
+        end
+    end
+})
+
+-- Toggle Power Shoot
+Tabs.ButtonTab:Toggle({
+    Title = "Add Power | Mobile",
+    Desc = "Turn on to use the Power Shoot",
+    Default = false,
+    Callback = function(state)
+        toggleEnabled = state
+
+        -- Hapus koneksi lama
+        if shootConnection then
+            shootConnection:Disconnect()
+            shootConnection = nil
+        end
+
+        if toggleEnabled then
+            print("Custom shoot enabled")
+
+            shootConnection = shootButton.MouseButton1Click:Connect(function()
+                local shootDirection = Vector3.new(1, 0, 0) -- arah default
+                local args = {
+                    [1] = maxPower,
+                    [4] = shootDirection
+                }
+
+                ReplicatedStorage.Packages.Knit.Services.BallService.RE.Shoot:FireServer(unpack(args))
+                print("Shoot with power:", maxPower)
+            end)
+        else
+            print("Custom shoot disabled (button won't shoot)")
+        end
+    end
+})
+
+Tabs.ButtonTab:Section({ Title = "▸ POWER SETTINGS | PC" })
+
+local UIS = game:GetService("UserInputService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+
+local player = Players.LocalPlayer
+
+local pcMaxPower = 180
+local pcToggleEnabled = false
+local pcShootConnection
+local keybind = Enum.KeyCode.E -- Default key
+
+-- Input Power untuk PC
+Tabs.ButtonTab:Input({
+    Title = "Input Power | PC",
+    Desc = "Default: 180",
+    Default = "",
+    PlaceholderText = "Enter number (ex: 500)",
+    Callback = function(input)
+        local num = tonumber(input)
+        if num then
+            pcMaxPower = num
+            print("PC Max power set to:", pcMaxPower)
+        end
+    end
+})
+
+-- Input Keybind
+Tabs.ButtonTab:Input({
+    Title = "Keybind | PC",
+    Desc = "Default: E",
+    Default = "",
+    PlaceholderText = "Enter key (ex: E, Q, R)",
+    Callback = function(input)
+        local upperInput = input:upper()
+        local success, newKey = pcall(function()
+            return Enum.KeyCode[upperInput]
+        end)
+
+        if success and newKey then
+            keybind = newKey
+            print("Keybind changed to:", keybind.Name)
+        else
+            warn("Invalid key:", input)
+        end
+    end
+})
+
+-- Toggle untuk PC Shooting
+Tabs.ButtonTab:Toggle({
+    Title = "Add Power | PC",
+    Desc = "Use keybinds for custom shoots.",
+    Default = false,
+    Callback = function(state)
+        pcToggleEnabled = state
+
+        -- Matikan koneksi sebelumnya
+        if pcShootConnection then
+            pcShootConnection:Disconnect()
+            pcShootConnection = nil
+        end
+
+        if pcToggleEnabled then
+            print("PC Custom shoot active (press " .. keybind.Name .. " to shoot)")
+
+            pcShootConnection = UIS.InputBegan:Connect(function(input, gameProcessed)
+                if not gameProcessed and input.KeyCode == keybind then
+                    local shootDirection = Vector3.new(1, 0, 0) -- Ganti ke arah kamera kalau mau
+                    local args = {
+                        [1] = pcMaxPower,
+                        [4] = shootDirection
+                    }
+
+                    ReplicatedStorage.Packages.Knit.Services.BallService.RE.Shoot:FireServer(unpack(args))
+                    print("Shoot with power:", pcMaxPower)
+                end
+            end)
+        else
+            print("PC Custom shoot is disabled")
+        end
+    end
+})
+
+Tabs.BallTab:Section({ Title = "BALL" })
+
+local scriptURL = "https://gist.githubusercontent.com/XZuuyaX/193299c4e3d24f2d50ec9647f4b36853/raw/82b1c4323081ac8ebd616a4089f8f74cd4ce7731/ControlBall" 
+local scriptInstance
+
+-- Tombol untuk mengaktifkan/menonaktifkan skrip
+Tabs.BallTab:Button({
+    Title = "Control Ballv1",
+    Callback = function()
+        if not scriptInstance then
+            -- Load skrip hanya jika belum dimuat
+            scriptInstance = loadstring(game:HttpGet(scriptURL, true))() -- Load script baru
+            print("Script Activated")
+        else
+            -- Jika script sudah ada, jalankan fungsi untuk stop (jika ada)
+            if typeof(scriptInstance) == "function" then
+                scriptInstance() -- Jika ada fungsi stop, panggil fungsi stop
+            end
+            scriptInstance = nil -- Reset biar bisa di-load ulang
+            print("Script Deactivated")
+        end
+    end
+})
+
+
+local Player = game.Players.LocalPlayer
+local PlayerGui = Player.PlayerGui
+local ScreenGuiName = "ScreenGui"  -- Ganti dengan nama ScreenGui yang tepat
+
+-- Cek apakah ScreenGui ada
+local function getScreenGui()
+    return PlayerGui:FindFirstChild(ScreenGuiName)  -- Cari ScreenGui berdasarkan nama
+end
+
+-- Tombol untuk Delete GUI
+Tabs.BallTab:Button({
+    Title = "Delete Control Ball Gui",
+        Desc = [[
+For ControlBallV1
+Do not use if you are using V2
+]],
+    Callback = function()
+        local ScreenGui = getScreenGui()
+
+        -- Jika ScreenGui ditemukan, hapus
+        if ScreenGui then
+            ScreenGui:Destroy()
+            print("ScreenGui has been removed.")
+        else
+            print("ScreenGui not found, no need to delete.")
+        end
+    end
+})
+
+local scriptURL = "https://gist.githubusercontent.com/XZuuyaX/db95bac6f5d1ea683ea65a8158f9b904/raw/b8d793109a92a11c32e7fc36ccef1cab5766e98a/ControlBallV2" 
+local scriptInstance
+
+-- Tombol untuk mengaktifkan/menonaktifkan skrip
+Tabs.BallTab:Button({
+    Title = "Control BallV2",
+    Callback = function()
+        if not scriptInstance then
+            -- Load skrip hanya jika belum dimuat
+            scriptInstance = loadstring(game:HttpGet(scriptURL, true))() -- Load script baru
+            print("Script Activated")
+        else
+            -- Jika script sudah ada, jalankan fungsi untuk stop (jika ada)
+            if typeof(scriptInstance) == "function" then
+                scriptInstance() -- Jika ada fungsi stop, panggil fungsi stop
+            end
+            scriptInstance = nil -- Reset biar bisa di-load ulang
+            print("Script Deactivated")
+        end
+    end
+})
+
+local rgbActive = false  -- Menyimpan status RGB aktif
+
+Tabs.BallTab:Slider({
+    Title = "Ball Expander",
+    Value = {
+        Min = 1,
+        Max = 25,
+        Default = 2.5,
+    },
+    Callback = function(value)
+        for _, obj in pairs(workspace:GetDescendants()) do
+            if obj:IsA("Part") and obj.Name == "Hitbox" and obj.Parent and obj.Parent.Name == "Football" then
+                obj.Size = Vector3.new(value, value, value)
+                obj.Transparency = 0.5 -- Tetap 0.5 biar transparan
+                obj.Material = Enum.Material.ForceField
+            end
+        end
+        print("Hitbox size set to: " .. value)
+    end
+})
+
+Tabs.BallTab:Toggle({
+    Title = "Enable RGB Hitbox",
+    Default = false,
+    Callback = function(state)
+        rgbActive = state  -- Menyimpan status toggle RGB
+
+        for _, obj in pairs(workspace:GetDescendants()) do
+            if obj:IsA("Part") and obj.Name == "Hitbox" and obj.Parent and obj.Parent.Name == "Football" then
+                if state then
+                    -- RGB Aktif
+                    obj.Material = Enum.Material.Neon
+                    obj.Transparency = 0.8
+                    -- Start RGB cycling jika RGB diaktifkan
+                    task.spawn(function()
+                        while rgbActive do
+                            obj.Color = Color3.fromRGB(math.random(0, 255), math.random(0, 255), math.random(0, 255))
+                            wait(0.5)
+                        end
+                    end)
+                else
+                    -- RGB Dimatikan
+                    obj.Color = Color3.fromRGB(255, 255, 255)
+                    obj.Material = Enum.Material.ForceField
+                    obj.Transparency = 0.5
+                end
+            end
+        end
+        print("RGB Hitbox enabled: " .. tostring(state))
+    end
+})
+
+
+-- Pastikan hitbox selalu nempel ke bola
+game:GetService("RunService").Stepped:Connect(function()
+    local hitbox = getFootballHitbox()
+    if hitbox then
+        local football = hitbox.Parent
+        if football and football:IsA("BasePart") then
+            hitbox.Position = football.Position
+        end
+    end
+end)
+
+Tabs.BallTab:Section({ Title = "Need Reo/Kurona/BallOwnership" })
+
+Tabs.BallTab:Button({
+    Title = "Bring Ball",
+    Desc = " Default Keybind is a 'K' ", 
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/XZuuyaX/BringBall/refs/heads/main/Script.lua"))()
+    end
+})
+
+Tabs.ToggleTab:Button({
+    Title = "Rollback",
+    Desc = [[Use at ur own risk]],
+    Locked = true, 
+    Callback = function() 
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/XZuuyaX/RB-BLR/refs/heads/main/Rb.Lua"))()
+  end
+})
+
+Tabs.InfoTab:Paragraph({
+    Title = "Made by XZuyaX",
+    Desc = "Thanks for using my script!\n\nStay updated with my latest scripts and content by following me on social media!",
+    Buttons = {
+        {
+            Title = "YouTube",
+            Callback = function()
+                setclipboard("https://youtube.com/@xzuyax-d7n")
+                WindUI:Notify({
+                    Title = "Copied!",
+                    Content = "YouTube link has been copied to clipboard.",
+                    Icon = "youtube",
+                    Duration = 5
+                })
+            end
+        },
+        {
+            Title = "TikTok",
+            Callback = function()
+                setclipboard("https://www.tiktok.com/@zuyaxrawr?_t=ZS-8vaZDjWUU1R&_r=1")
+                WindUI:Notify({
+                    Title = "Copied!",
+                    Content = "TikTok link has been copied to clipboard.",
+                    Icon = "music-2",
+                    Duration = 5
+                })
+            end
+        }
+    }
+})
+
+Tabs.MiscTab:Section({ Title = "Custom Style Button" })
+
+Tabs.MiscTab:Button({
+    Title = "Style Changer Button",
+    Desc = "Reo Needed",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/yz188u/Stm/refs/heads/main/Main.lua", true))()
+    end
+})
+
+Tabs.MiscTab:Section({ Title = "Players" })
+
+Tabs.MiscTab:Button({
+    Title = "Auto GK",
+    Desc = "Run the Auto Goalkeeper | Not 100% Accurate , but still good i think",
+    Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/yz188u/agk/main/main.luau", true))() end
+})
+
+Tabs.MiscTab:Button({
+    Title = "Fix Bug Character",
+    Desc = "To fix bug when you use Auto GK", 
+    Callback = function()
+        local playerModel = workspace:FindFirstChild(game.Players.LocalPlayer.Name)
+        if playerModel and playerModel:FindFirstChild("IsRagdoll") then
+            local isRagdoll = playerModel.IsRagdoll
+            isRagdoll.Value = true
+            isRagdoll.Value = false
+        else
+            print("IsRagdoll not found!")
+        end
+    end
+})
+
+local GKAssist = false
+
+
+Tabs.MiscTab:Toggle({
+    Title = "GK Assist",
+    Desc = [[Combine with Ball Expander]],
+    Default = false,
+    Callback = function(state)
+        GKAssist = state
+        if GKAssist then
+            task.spawn(function()
+                while GKAssist do
+                    pcall(function()
+                        game:GetService("ReplicatedStorage").Packages.Knit.Services.BallService.RE.Dive:FireServer()
+                    end)
+                    task.wait(0.1)
+                end
+            end)
+        end
+    end
+})
+
+local tpwalking = false
+local tpwalkConnection -- buat nyimpen loop-nya
+
+-- Toggle buat aktif/inaktifin tpwalk
+Tabs.MiscTab:Toggle({
+    Title = "SpeedHack",
+    Icon = "chevrons-up", 
+    Default = false,
+    Callback = function(state)
+        tpwalking = state
+
+        -- Stop loop lama dulu kalau ada
+        if tpwalkConnection then
+            tpwalkConnection:Disconnect()
+            tpwalkConnection = nil
+        end
+
+        -- Kalau dinyalain, mulai ulang loop-nya
+        if tpwalking then
+            tpwalkConnection = game:GetService("RunService").Heartbeat:Connect(function()
+                local chr = game.Players.LocalPlayer.Character
+                local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
+
+                if chr and hum and hum.Parent then
+                    if hum.MoveDirection.Magnitude > 0 then
+                        if tspeed and isNumber(tspeed) then
+                            chr:TranslateBy(hum.MoveDirection * tonumber(tspeed))
+                        else
+                            chr:TranslateBy(hum.MoveDirection)
+                        end
+                    end
+                end
+            end)
+        end
+    end
+})
+
+local nameInput = ""
+local numberInput = ""
+
+Tabs.MiscTab:Input({
+    Title = "Entername",
+    Desc = "Put ur Name Here",
+    Default = "",
+    PlaceholderText = "Enter your name",
+    Callback = function(input)
+        nameInput = input
+        print("Username: " .. input)
+    end
+})
+
+Tabs.MiscTab:Input({
+    Title = "Number",
+    Desc = "Inf Number",
+    Default = "",
+    PlaceholderText = "Enter Jersey Number",
+    Callback = function(input)
+        numberInput = input
+        print("Number: " .. input)
+    end
+})
+
+Tabs.MiscTab:Button({
+    Title = "ENTER",
+    Desc = "Changed Jersey",
+    Callback = function()
+        if nameInput ~= "" and numberInput ~= "" then
+            local args = {
+                [1] = nameInput,
+                [2] = numberInput
+            }
+            game:GetService("ReplicatedStorage").Packages.Knit.Services.CustomizationService.RE.Jersey:FireServer(unpack(args))
+            print("Jersey changed with name:", nameInput, "and number:", numberInput)
+        else
+            warn("fill in all the input first!")
+        end
+    end
+})
+
+Tabs.InfoTab:Button({
+    Title = "Join Our Discord Server!",
+    Desc = "New Link!",
+    Callback = function()
+        local discordInvite = "https://discord.gg/X4H7phPu8P" -- Ganti sama link lo
+
+        setclipboard(discordInvite)
+        WindUI:Notify({
+            Title = "Copied!",
+            Content = "Discord invite link copied.",
+            Icon = "check",
+            Duration = 5,
+        })
+    end
+})
+
+Tabs.ServerTab:Section({ Title = "Server | Press Again If Not Found the Server" })
+
+local TeleportService = game:GetService("TeleportService")
+local HttpService = game:GetService("HttpService")
+local PlaceId = game.PlaceId
+
+-- Function to join a low player server (0-3 players)
+local function joinLowServer()
+    local cursor = ""
+    local servers = {}
+
+    repeat
+        local success, response = pcall(function()
+            return game:HttpGet(
+                string.format("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Asc&limit=100&cursor=%s", PlaceId, cursor)
+            )
+        end)
+
+        if success then
+            local data = HttpService:JSONDecode(response)
+            cursor = data.nextPageCursor or ""
+
+            for _, server in ipairs(data.data) do
+                if server.playing <= 3 and server.id ~= game.JobId then
+                    table.insert(servers, server)
+                end
+            end
+        else
+            warn("Failed to fetch servers")
+            break
+        end
+    until not cursor or #servers > 0
+
+    if #servers > 0 then
+        local target = servers[math.random(1, #servers)]
+        TeleportService:TeleportToPlaceInstance(PlaceId, target.id)
+    else
+        warn("No low-player server found.")
+    end
+end
+
+-- Function to join a nearly full server (8-9 players)
+local function joinAlmostFullServer()
+    local cursor = ""
+    local servers = {}
+
+    repeat
+        local success, response = pcall(function()
+            return game:HttpGet(
+                string.format("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Desc&limit=100&cursor=%s", PlaceId, cursor)
+            )
+        end)
+
+        if success then
+            local data = HttpService:JSONDecode(response)
+            cursor = data.nextPageCursor or ""
+
+            for _, server in ipairs(data.data) do
+                if server.playing >= 8 and server.playing < server.maxPlayers and server.id ~= game.JobId then
+                    table.insert(servers, server)
+                end
+            end
+        else
+            warn("Failed to fetch servers")
+            break
+        end
+    until not cursor or #servers > 0
+
+    if #servers > 0 then
+        local target = servers[math.random(1, #servers)]
+        TeleportService:TeleportToPlaceInstance(PlaceId, target.id)
+    else
+        warn("No nearly full server found.")
+    end
+end
+
+-- Function to rejoin the current game
+local function rejoinServer()
+    TeleportService:Teleport(PlaceId, game.Players.LocalPlayer)
+end
+
+Tabs.ServerTab:Button({
+    Title = "Low Server",
+    Desc = "Join a server with less players",
+    Callback = function()
+        joinLowServer()
+    end
+})
+
+
+
+Tabs.ServerTab:Button({
+    Title = "Most Player Server",
+    Callback = function()
+        joinAlmostFullServer()
+    end
+})
+
+Tabs.ServerTab:Button({
+    Title = "Rejoin Game",
+    Callback = function()
+        rejoinServer()
+    end
+})
+
+Tabs.InfoTab:Paragraph({
+    Title = "Changelog | Update",
+    Desc = [[
+Update:
+- FREE COSMETIC (visual) Added
+]]
+})
+ 
+Tabs.EventTab:Section({ Title = "This event will end in Time" })
+
+Tabs.EventTab:Button({
+    Title = "Trigger Easter",
+    Desc = "Trigger Easter Event Prompt",
+    Callback = function()
+        local prompt = workspace:WaitForChild("EasterEvent"):WaitForChild("EasterTrigger"):WaitForChild("Prox")
+        fireproximityprompt(prompt)
+    end
+})
+
+Tabs.VisualTab:Button({
+    Title = "Robux BLR Emote",
+    Desc = "This is just a Visual.", 
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/yz188u/EmtBlr/refs/heads/main/main.luau"))()
+    end
+})
+
+Tabs.VisualTab:Button({
+Title = "Delete Emotes GUI",
+Desc = "If u want to delete the GUI (Only GUI)",
+Callback = function()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+
+    -- Hapus GUI dari CoreGui
+    local coreGui = game:GetService("CoreGui")
+    local emoteGui = coreGui:FindFirstChild("EmoteGuiExecutor")
+    if emoteGui then
+        emoteGui:Destroy()
+    end
+
+    -- Hentikan semua animasi
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        for _, track in pairs(humanoid:GetPlayingAnimationTracks()) do
+            track:Stop()
+        end
+    end
+
+    -- Hapus semua VFX & Sound di karakter
+    for _, descendant in pairs(character:GetDescendants()) do
+        if descendant:IsA("ParticleEmitter") or descendant:IsA("Beam") or descendant:IsA("Trail") or descendant:IsA("Sound") then
+            descendant:Destroy()
+        end
+    end
+
+end
+})
+
+Tabs.VisualTab:Toggle({
+    Title = "Visual Ball Prediction",
+    Icon = "eye",
+    Desc = "Show football prediction path",
+    Default = false,
+    Callback = function(enabled)
+        _G.Predicting = enabled
+
+        if enabled then
+            -- Load script dari URL atau langsung dari dalam sini
+            local success, err = pcall(function()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/yz188u/Vsp/refs/heads/main/Main.Lua"))()
+            end)
+            if not success then
+                warn("Failed to load prediction script:", err)
+            end
+        else
+            -- Hapus visual prediksi
+            local folder = workspace:FindFirstChild("FootballPrediction")
+            if folder then folder:Destroy() end
+        end
+    end
+})
+
+Tabs.VisualTab:Section({ Title = "FREE COSMETIC" })
+
+-- ⚡ COMPLETE MAIN COSMETIC HANDLER        
+local ReplicatedStorage = game:GetService("ReplicatedStorage")        
+local CollectionService = game:GetService("CollectionService")        
+local RunService = game:GetService("RunService")        
+local Players = game:GetService("Players")        
+        
+local player = Players.LocalPlayer        
+local character = player.Character or player.CharacterAdded:Wait()        
+_G.ACTIVE_COSMETIC = _G.ACTIVE_COSMETIC or nil        
+local BF_Instances = {}        
+        
+local COSMETICS = {        
+    ["Shidou Wings"] = {        
+        Model = ReplicatedStorage.Controllers.CosmeticsController["Shidou Wings"].ShidouWings,        
+        Anim = ReplicatedStorage.Controllers.CosmeticsController["Shidou Wings"].FlapAnim,        
+    },        
+    ["Futon"] = {        
+        Model = ReplicatedStorage.Controllers.CosmeticsController["Futon"].Model,        
+    },        
+    ["AFK Crown"] = {        
+        Model = ReplicatedStorage.Controllers.CosmeticsController["AFK Crown"].Model,        
+    },        
+    ["All Seeing Eye"] = {        
+        Model = ReplicatedStorage.Assets.Misc.AllSeeingEye,        
+    },        
+    ["Analysis"] = {        
+        Model = ReplicatedStorage.Controllers.CosmeticsController["Analysis"].Model,        
+    },        
+    ["Angel Wings"] = {        
+        Model = ReplicatedStorage.Controllers.CosmeticsController["Angel Wings"].WingsLoop,        
+        Anim = ReplicatedStorage.Controllers.CosmeticsController["Angel Wings"].FlapAnim,        
+    },        
+    ["Balls Frenzy"] = {        
+        Special = "BALLS_FRENZY",        
+    },        
+    ["Beach Ball"] = {        
+        Model = ReplicatedStorage.Controllers.CosmeticsController["Beach Ball"].Model,        
+    },        
+    ["Bunny Buddy"] = {        
+        Model = ReplicatedStorage.Controllers.CosmeticsController["Bunny Buddy"].Model,        
+    },        
+    ["Clouds"] = {        
+        Special = "CLOUDS",        
+    },        
+    ["Crystal Wings"] = {      
+    Model = ReplicatedStorage.Controllers.CosmeticsController["Crystal Wings"].Model,      
+    },        
+    ["Lanterns!"] = {      
+        Special = "LANTERNS",      
+    },    
+    ["Godspeed Aura"] = {
+    Special = "GODSPEED_AURA",
+    },  
+    ["SHADOW"] = {
+    Special = "SHADOW",
+    },
+}      
+        
+local function RemoveAllCosmetics(playerCharacter)        
+    for _, cosmetic in pairs(playerCharacter:GetDescendants()) do        
+        if CollectionService:HasTag(cosmetic, "Cosmetic") then        
+            cosmetic:Destroy()        
+        end        
+    end        
+end        
+        
+local function SetupCosmetic(playerCharacter, cosmeticName)        
+    local data = COSMETICS[cosmeticName]        
+    if not data then        
+        warn("[CosmeticHandler] Tidak ditemukan kosmetik:", cosmeticName)        
+        return        
+    end        
+    RemoveAllCosmetics(playerCharacter)        
+        
+    if cosmeticName == "Futon" then        
+        local model = data.Model:Clone()        
+        model.Parent = playerCharacter        
+        CollectionService:AddTag(model, "Cosmetic")        
+        
+    elseif cosmeticName == "AFK Crown" then        
+        local crown = data.Model:Clone()        
+        crown.Parent = playerCharacter        
+        CollectionService:AddTag(crown, "Cosmetic")        
+        
+    elseif cosmeticName == "All Seeing Eye" then        
+        local eye = data.Model:Clone()        
+        eye.Parent = playerCharacter        
+        CollectionService:AddTag(eye, "Cosmetic")        
+        local weld = Instance.new("Weld", playerCharacter.HumanoidRootPart)        
+        weld.Part0 = playerCharacter.HumanoidRootPart        
+        weld.Part1 = eye.RootPart        
+        weld.C0 = CFrame.new()        
+        weld.C1 = CFrame.new(-4.5, 2, 0) * CFrame.Angles(0, math.pi, 0)        
+        local animator = eye:FindFirstChild("AnimationController") and eye.AnimationController.Animator        
+        if animator then        
+            animator:LoadAnimation(ReplicatedStorage.Assets.Emotes["Puppeteer Hand"]):Play()        
+        end        
+        
+    elseif cosmeticName == "Analysis" then        
+        local analysis = data.Model:Clone()        
+        analysis.Parent = playerCharacter        
+        CollectionService:AddTag(analysis, "Cosmetic")        
+        if analysis:FindFirstChild("MainPart") and analysis.MainPart:FindFirstChild("RootPartWeld") then        
+            analysis.MainPart.RootPartWeld.Part1 = playerCharacter:WaitForChild("HumanoidRootPart")        
+        end        
+        
+    elseif cosmeticName == "Angel Wings" then        
+        local wings = data.Model:Clone()        
+        wings.Parent = playerCharacter        
+        CollectionService:AddTag(wings, "Cosmetic")        
+        if playerCharacter:FindFirstChild("Torso") then        
+            wings.Wings.WingWeld.Part0 = playerCharacter.Torso        
+            wings.Wings.WingWeld.Part1 = wings.Wings        
+        end        
+        local animator = wings:FindFirstChild("AnimationController") and wings.AnimationController.Animator        
+        if animator and data.Anim then        
+            animator:LoadAnimation(data.Anim):Play()        
+        end        
+        
+    elseif cosmeticName == "Balls Frenzy" then        
+        BF_Instances = {}        
+        local controllerPath = ReplicatedStorage.Controllers.CosmeticsController["Balls Frenzy"]        
+        local assetsPath = ReplicatedStorage.Assets.Cosmetics["Balls Frenzy"]        
+        
+        local bodyAura = controllerPath:FindFirstChild("BodyAura") and controllerPath["BodyAura"]:Clone()        
+        if bodyAura then        
+            bodyAura.Parent = playerCharacter        
+            bodyAura.Name = "BodyAura"        
+            CollectionService:AddTag(bodyAura, "Cosmetic")        
+            BF_Instances["BodyAura"] = bodyAura        
+            bodyAura.Transparency = 1        
+            bodyAura:GetPropertyChangedSignal("Transparency"):Connect(function()        
+                if bodyAura.Transparency ~= 1 then        
+                    bodyAura.Transparency = 1        
+                end        
+            end)        
+        end        
+        
+        local trail = controllerPath:FindFirstChild("Trail") and controllerPath["Trail"]:Clone()        
+        if trail then        
+            trail.Parent = playerCharacter        
+            CollectionService:AddTag(trail, "Cosmetic")        
+            BF_Instances["Trail"] = trail        
+        end        
+        
+        for _, partName in pairs({"Torso", "Left Arm", "Right Arm", "Left Leg", "Right Leg"}) do        
+            local partFolder = assetsPath:FindFirstChild(partName)        
+            if partFolder then        
+                local vfx = partFolder:FindFirstChild("Small realistic energy burst"):Clone()        
+                if vfx then        
+                    vfx.Parent = playerCharacter        
+                    vfx.Name = "VFX_" .. partName:gsub(" ", "")        
+                    CollectionService:AddTag(vfx, "Cosmetic")        
+                    BF_Instances[partName] = vfx        
+                end        
+            end        
+        end        
+        
+    elseif cosmeticName == "Beach Ball" then        
+        local beachBall = data.Model:Clone()        
+        beachBall.Parent = playerCharacter        
+        CollectionService:AddTag(beachBall, "Cosmetic")        
+        if beachBall:FindFirstChild("Weld") and playerCharacter:FindFirstChild("Head") then        
+            beachBall.Weld.Part1 = playerCharacter.Head        
+        end        
+        
+    elseif cosmeticName == "Bunny Buddy" then        
+        local bunny = data.Model:Clone()        
+        bunny.Parent = playerCharacter        
+        CollectionService:AddTag(bunny, "Cosmetic")        
+        
+    elseif cosmeticName == "Clouds" then        
+        if playerCharacter:FindFirstChild("FollowingPlanets") then return end        
+        local hrp = playerCharacter:WaitForChild("HumanoidRootPart")        
+        if playerCharacter:FindFirstChild("FollowingPlanets") then
+        playerCharacter.FollowingPlanets:Destroy()
+        end
+        local cosmeticFolder = Instance.new("Folder")        
+        cosmeticFolder.Name = "FollowingPlanets"        
+        cosmeticFolder.Parent = playerCharacter        
+        CollectionService:AddTag(cosmeticFolder, "Cosmetic")        
+        
+        local tbl_upvr = {}        
+        local planetAttachments = ReplicatedStorage.Controllers.CosmeticsController.Clouds:WaitForChild("PlanetAttachments")        
+        local cloudPart = ReplicatedStorage.Controllers.CosmeticsController.Clouds:WaitForChild("Cloud")        
+        
+        for _, v in planetAttachments:GetChildren() do        
+            local attachClone = v:Clone()        
+            attachClone.Parent = hrp        
+        
+            local planetClone = cloudPart:Clone()        
+            planetClone.CFrame = attachClone.WorldCFrame        
+            planetClone.Parent = cosmeticFolder        
+            CollectionService:AddTag(planetClone, "Cosmetic")        
+        
+            table.insert(tbl_upvr, {        
+                Model = planetClone,        
+                Attachment = attachClone,        
+                ActualPosition = planetClone.CFrame,        
+                YOffset = 0,        
+                TimeOffset = math.random(1, 100),        
+                Speed = 0.08 + math.random(-3, 3) / 100,        
+                WaveLength = math.random(-10, 10) / 10,        
+                Rotation = CFrame.Angles(0, 0, 0),        
+                RotationSpeed = math.random(5, 15) / 50,        
+            })        
+        end        
+        
+        local conn = RunService.RenderStepped:Connect(function(dt)        
+            if not playerCharacter or not playerCharacter.Parent or not playerCharacter:FindFirstChild("HumanoidRootPart") then        
+                conn:Disconnect()        
+                return        
+            end        
+            local cframe = CFrame.new(hrp.Position)        
+            for _, v2 in pairs(tbl_upvr) do        
+                v2.YOffset = math.sin(tick() + v2.TimeOffset + v2.WaveLength) / 3        
+                v2.ActualPosition = v2.ActualPosition:Lerp(v2.Attachment.WorldCFrame, v2.Speed)        
+                v2.Rotation *= CFrame.Angles(0, v2.RotationSpeed * dt, 0)        
+                v2.Model.CFrame = (v2.ActualPosition + Vector3.new(0, v2.YOffset, 0)) * v2.Rotation        
+                v2.Attachment.WorldCFrame = cframe        
+                    * CFrame.Angles(0, (2 * dt) / (math.abs((v2.ActualPosition.Position - hrp.Position).Magnitude) * 3), 0)        
+                    * cframe:ToObjectSpace(v2.Attachment.WorldCFrame)        
+            end        
+        end)        
+    elseif cosmeticName == "Crystal Wings" then      
+    local data = COSMETICS["Crystal Wings"]      
+    local crystal = data.Model:Clone()      
+    crystal.Parent = playerCharacter      
+    CollectionService:AddTag(crystal, "Cosmetic")      
+      
+    local conn      
+    conn = RunService.RenderStepped:Connect(function()      
+        if not playerCharacter or not playerCharacter.Parent then      
+            conn:Disconnect()      
+            crystal:Destroy()      
+        else      
+            if playerCharacter:FindFirstChild("Torso") then      
+                crystal:PivotTo(playerCharacter.Torso.CFrame * CFrame.new(0, -3, 0.27))      
+            end      
+        end      
+    end)      
+      
+    elseif cosmeticName == "Lanterns!" then      
+        if playerCharacter:FindFirstChild("FollowingLanterns") then return end        
+        local hrp = playerCharacter:WaitForChild("HumanoidRootPart")        
+        if playerCharacter:FindFirstChild("FollowingLanterns") then
+        playerCharacter.FollowingPlanets:Destroy()
+        end
+        local lanternAssets = ReplicatedStorage.Assets.Cosmetics["Lanterns!"]      
+        local bodyParts = {      
+            ["Head"] = "Head",      
+            ["Torso"] = "Torso",      
+            ["Left Arm"] = "Left Arm",      
+            ["Right Arm"] = "Right Arm",      
+            ["Left Leg"] = "Left Leg",      
+            ["Right Leg"] = "Right Leg",      
+        }      
+      
+        for partName, actualPartName in pairs(bodyParts) do      
+            local partAsset = lanternAssets:FindFirstChild(partName)      
+            if partAsset and playerCharacter:FindFirstChild(actualPartName) then      
+                local clonedPart = partAsset:Clone()      
+                clonedPart.Name = partName      
+                clonedPart.Transparency = 1      
+                clonedPart.Parent = playerCharacter:FindFirstChild(actualPartName)      
+      
+                CollectionService:AddTag(clonedPart, "Cosmetic")      
+                local weld = Instance.new("Weld")      
+                weld.Part0 = playerCharacter[actualPartName]      
+                weld.Part1 = clonedPart      
+                weld.C0 = CFrame.new()      
+                weld.C1 = CFrame.new()      
+                weld.Parent = clonedPart      
+            end      
+        end      
+      
+        if playerCharacter:FindFirstChild("FollowingLanterns") then return end      
+        local hrp = playerCharacter:WaitForChild("HumanoidRootPart")      
+        local cosmeticFolder = Instance.new("Folder")      
+        cosmeticFolder.Name = "FollowingLanterns"      
+        cosmeticFolder.Parent = playerCharacter      
+        CollectionService:AddTag(cosmeticFolder, "Cosmetic")      
+      
+        local tbl_upvr = {}      
+        local planetAttachments = ReplicatedStorage.Controllers.CosmeticsController["Lanterns!"]:WaitForChild("LanternAttachments")      
+        local lunarLantern = ReplicatedStorage.Controllers.CosmeticsController["Lanterns!"]:WaitForChild("Lunar Lantern")      
+      
+        for _, v in planetAttachments:GetChildren() do      
+            local attachClone = v:Clone()      
+            attachClone.Parent = hrp      
+            local planetClone = lunarLantern:Clone()      
+            planetClone.CFrame = attachClone.WorldCFrame      
+            planetClone.Parent = cosmeticFolder      
+            CollectionService:AddTag(planetClone, "Cosmetic")      
+            table.insert(tbl_upvr, {      
+                Model = planetClone,      
+                Attachment = attachClone,      
+                ActualPosition = planetClone.CFrame,      
+                YOffset = 0,      
+                TimeOffset = math.random(1, 100),      
+                Speed = 0.08 + math.random(-3, 3) / 100,      
+                WaveLength = math.random(-10, 10) / 10,      
+                Rotation = CFrame.Angles(0, 0, 0),      
+                RotationSpeed = math.random(5, 15) / 50,      
+            })      
+        end      
+      
+        local conn = RunService.RenderStepped:Connect(function(dt)      
+            if not playerCharacter or not playerCharacter.Parent or not playerCharacter:FindFirstChild("HumanoidRootPart") then      
+                conn:Disconnect()      
+                return      
+            end      
+            local cframe = CFrame.new(hrp.Position)      
+            for _, v2 in pairs(tbl_upvr) do      
+                v2.YOffset = math.sin(tick() + v2.TimeOffset + v2.WaveLength) / 3      
+                v2.ActualPosition = v2.ActualPosition:Lerp(v2.Attachment.WorldCFrame, v2.Speed)      
+                v2.Rotation *= CFrame.Angles(0, v2.RotationSpeed * dt, 0)      
+                v2.Model.CFrame = (v2.ActualPosition + Vector3.new(0, v2.YOffset, 0)) * v2.Rotation      
+                v2.Attachment.WorldCFrame = cframe      
+                    * CFrame.Angles(0, (2 * dt) / (math.abs((v2.ActualPosition.Position - hrp.Position).Magnitude) * 3), 0)      
+                    * cframe:ToObjectSpace(v2.Attachment.WorldCFrame)      
+            end      
+        end)      
+        elseif cosmeticName == "Godspeed Aura" then
+    local extraFolder = ReplicatedStorage.Controllers.CosmeticsController["Godspeed Aura"].Extra
+    local particleFolder = ReplicatedStorage.Controllers.CosmeticsController["Godspeed Aura"].Particles
+
+    for _, v in pairs(extraFolder:GetChildren()) do
+        local targetPart = playerCharacter:FindFirstChild(v.Name)
+        if targetPart then
+            local clonedPart = v:Clone()
+            clonedPart.Parent = targetPart
+            clonedPart.CFrame = targetPart.CFrame
+            local weld = Instance.new("Weld")
+            weld.Part0 = targetPart
+            weld.Part1 = clonedPart
+            weld.C0 = CFrame.new()
+            weld.C1 = CFrame.new()
+            weld.Parent = clonedPart
+            CollectionService:AddTag(clonedPart, "Cosmetic")
+        end
+    end
+
+    for _, v2 in pairs(particleFolder:GetChildren()) do
+        local targetPart = playerCharacter:FindFirstChild(v2.Name)
+        if targetPart then
+            local clonedParticle = v2:Clone()
+            clonedParticle.Parent = targetPart
+            clonedParticle.CFrame = targetPart.CFrame
+            local weld = Instance.new("Weld")
+            weld.Part0 = targetPart
+            weld.Part1 = clonedParticle
+            weld.C0 = CFrame.new()
+            weld.C1 = CFrame.new()
+            weld.Parent = clonedParticle
+            CollectionService:AddTag(clonedParticle, "Cosmetic")
+        end
+    end
+    elseif cosmeticName == "SHADOW" then
+    local CosmeticFolder = ReplicatedStorage.Assets.Cosmetics.SHADOW
+    local PartPaths = {
+        ["Head"] = CosmeticFolder.Head.Part,
+        ["Torso"] = CosmeticFolder.Torso.Part,
+        ["Left Arm"] = CosmeticFolder["Left Arm"].Part,
+        ["Right Arm"] = CosmeticFolder["Right Arm"].Part,
+        ["Left Leg"] = CosmeticFolder["Left Leg"].Part,
+        ["Right Leg"] = CosmeticFolder["Right Leg"].Part,
+    }
+
+    for bodyName, sourcePart in pairs(PartPaths) do
+        local target = playerCharacter:FindFirstChild(bodyName)
+        if target then
+            local clonedPart = sourcePart:Clone()
+            clonedPart.Anchored = false
+            clonedPart.CanCollide = false
+            clonedPart.CFrame = target.CFrame
+            clonedPart.Parent = target
+            CollectionService:AddTag(clonedPart, "Cosmetic")
+
+            local weld = Instance.new("WeldConstraint")
+            weld.Part0 = target
+            weld.Part1 = clonedPart
+            weld.Parent = clonedPart
+        end
+    end
+    else        
+        local cosmeticModel = data.Model:Clone()        
+        if playerCharacter:FindFirstChild("Torso") then        
+            cosmeticModel.RootPart.Weld.Part0 = playerCharacter.Torso        
+        end        
+        cosmeticModel.Parent = playerCharacter        
+        CollectionService:AddTag(cosmeticModel, "Cosmetic")        
+        local animator = cosmeticModel:FindFirstChild("AnimationController") and cosmeticModel.AnimationController.Animator        
+        if animator and data.Anim then        
+            animator:LoadAnimation(data.Anim):Play()        
+        end        
+    end        
+end        
+        
+local function ApplyCosmetic(cosmeticName)        
+    _G.ACTIVE_COSMETIC = cosmeticName        
+    if player.Character then        
+        SetupCosmetic(player.Character, cosmeticName)        
+    end        
+    print("[INFO] Cosmetic Replaced:", cosmeticName)        
+end        
+        
+RunService.RenderStepped:Connect(function()        
+    if not player.Character then return end        
+    local character = player.Character        
+    local hasCosmetic = false        
+    for _, cosmetic in pairs(character:GetDescendants()) do        
+        if CollectionService:HasTag(cosmetic, "Cosmetic") then        
+            hasCosmetic = true        
+            break        
+        end        
+    end        
+    if _G.ACTIVE_COSMETIC and not hasCosmetic then        
+        SetupCosmetic(character, _G.ACTIVE_COSMETIC)        
+    end        
+    if _G.ACTIVE_COSMETIC == "Futon" and character:FindFirstChild("Torso") then        
+        for _, cosmetic in pairs(character:GetDescendants()) do        
+            if CollectionService:HasTag(cosmetic, "Cosmetic") then        
+                cosmetic:PivotTo(character.Torso.CFrame * CFrame.new(0, 0.5, 1.27))        
+            end        
+        end        
+    elseif _G.ACTIVE_COSMETIC == "AFK Crown" and character:FindFirstChild("Head") then        
+        for _, cosmetic in pairs(character:GetDescendants()) do        
+            if CollectionService:HasTag(cosmetic, "Cosmetic") then        
+                cosmetic:PivotTo(character.Head.CFrame * CFrame.new(0, 0.9, 0))        
+            end        
+        end        
+    elseif _G.ACTIVE_COSMETIC == "Balls Frenzy" and character:FindFirstChild("Torso") then        
+        local torso = character.Torso        
+        for partName, instance in pairs(BF_Instances) do        
+            if partName == "BodyAura" or partName == "Trail" then        
+                instance:PivotTo(torso.CFrame)        
+            else        
+                local targetPart = character:FindFirstChild(partName:gsub(" ", ""))        
+                if targetPart then        
+                    instance:PivotTo(targetPart.CFrame)        
+                end        
+            end        
+        end        
+    elseif _G.ACTIVE_COSMETIC == "Bunny Buddy" and character:FindFirstChild("Torso") then        
+        for _, cosmetic in pairs(character:GetDescendants()) do        
+            if CollectionService:HasTag(cosmetic, "Cosmetic") then        
+                cosmetic:PivotTo(character.Torso.CFrame * CFrame.new(0, 0.5, 0.27))        
+            end        
+        end        
+    end        
+end)        
+        
+local cosmeticList = {      
+    "Shidou Wings",      
+    "Futon",      
+    "AFK Crown",      
+    "All Seeing Eye",      
+    "Analysis",      
+    "Angel Wings",      
+    "Balls Frenzy",      
+    "Beach Ball",      
+    "Bunny Buddy",      
+    "Clouds",      
+    "Crystal Wings",      
+    "Lanterns!",      
+    "Godspeed Aura",
+    "SHADOW",
+}      
+table.sort(cosmeticList)        
+        
+Tabs.VisualTab:Dropdown({        
+    Title = "Select Cosmetic",        
+    Desc = "Choose your Cosmetic",        
+    Values = cosmeticList,        
+    Value = "Default",        
+    Callback = function(option)        
+        ApplyCosmetic(option)        
+    end        
+})
+
+-- Configuration
+
+
+local HttpService = game:GetService("HttpService")
+
+local folderPath = "WindUI"
+makefolder(folderPath)
+
+local function SaveFile(fileName, data)
+    local filePath = folderPath .. "/" .. fileName .. ".json"
+    local jsonData = HttpService:JSONEncode(data)
+    writefile(filePath, jsonData)
+end
+
+local function LoadFile(fileName)
+    local filePath = folderPath .. "/" .. fileName .. ".json"
+    if isfile(filePath) then
+        local jsonData = readfile(filePath)
+        return HttpService:JSONDecode(jsonData)
+    end
+end
+
+local function ListFiles()
+    local files = {}
+    for _, file in ipairs(listfiles(folderPath)) do
+        local fileName = file:match("([^/]+)%.json$")
+        if fileName then
+            table.insert(files, fileName)
+        end
+    end
+    return files
+end
+
+Tabs.WindowTab:Section({ Title = "Window" })
+
+local themeValues = {}
+for name, _ in pairs(WindUI:GetThemes()) do
+    table.insert(themeValues, name)
+end
+
+local themeDropdown = Tabs.WindowTab:Dropdown({
+    Title = "Select Theme",
+    Multi = false,
+    AllowNone = false,
+    Value = nil,
+    Values = themeValues,
+    Callback = function(theme)
+        WindUI:SetTheme(theme)
+    end
+})
+themeDropdown:Select(WindUI:GetCurrentTheme())
+
+local ToggleTransparency = Tabs.WindowTab:Toggle({
+    Title = "Toggle Window Transparency",
+    Callback = function(e)
+        Window:ToggleTransparency(e)
+    end,
+    Value = WindUI:GetTransparency()
+})
+
+Tabs.WindowTab:Section({ Title = "Save" })
+
+local fileNameInput = ""
+Tabs.WindowTab:Input({
+    Title = "Write File Name",
+    PlaceholderText = "Enter file name",
+    Callback = function(text)
+        fileNameInput = text
+    end
+})
+
+Tabs.WindowTab:Button({
+    Title = "Save File",
+    Callback = function()
+        if fileNameInput ~= "" then
+            SaveFile(fileNameInput, { Transparent = WindUI:GetTransparency(), Theme = WindUI:GetCurrentTheme() })
+        end
+    end
+})
+
+Tabs.WindowTab:Section({ Title = "Load" })
+
+local filesDropdown
+local files = ListFiles()
+
+filesDropdown = Tabs.WindowTab:Dropdown({
+    Title = "Select File",
+    Multi = false,
+    AllowNone = true,
+    Values = files,
+    Callback = function(selectedFile)
+        fileNameInput = selectedFile
+    end
+})
+
+Tabs.WindowTab:Button({
+    Title = "Load File",
+    Callback = function()
+        if fileNameInput ~= "" then
+            local data = LoadFile(fileNameInput)
+            if data then
+                WindUI:Notify({
+                    Title = "File Loaded",
+                    Content = "Loaded data: " .. HttpService:JSONEncode(data),
+                    Duration = 5,
+                })
+                if data.Transparent then 
+                    Window:ToggleTransparency(data.Transparent)
+                    ToggleTransparency:SetValue(data.Transparent)
+                end
+                if data.Theme then WindUI:SetTheme(data.Theme) end
+            end
+        end
+    end
+})
+
+Tabs.WindowTab:Button({
+    Title = "Overwrite File",
+    Callback = function()
+        if fileNameInput ~= "" then
+            SaveFile(fileNameInput, { Transparent = WindUI:GetTransparency(), Theme = WindUI:GetCurrentTheme() })
+        end
+    end
+})
+
+Tabs.WindowTab:Button({
+    Title = "Refresh List",
+    Callback = function()
+        filesDropdown:Refresh(ListFiles())
+    end
+})
+
+Tabs.WindowTab:Button({
+    Title = "Hide The Open/Hide Icon",
+    Desc = "You can still click on it to open the script but it will be invisible",
+    Callback = function()
+        if logoBtn then
+            logoBtn.Image = ""
+        end
+    end
+})
+
+local currentThemeName = WindUI:GetCurrentTheme()
+local themes = WindUI:GetThemes()
+
+local ThemeAccent = themes[currentThemeName].Accent
+local ThemeOutline = themes[currentThemeName].Outline
+local ThemeText = themes[currentThemeName].Text
+local ThemePlaceholderText = themes[currentThemeName].PlaceholderText
+
+function updateTheme()
+    WindUI:AddTheme({
+        Name = currentThemeName,
+        Accent = ThemeAccent,
+        Outline = ThemeOutline,
+        Text = ThemeText,
+        PlaceholderText = ThemePlaceholderText
+    })
+    WindUI:SetTheme(currentThemeName)
+end
+
+local CreateInput = Tabs.CreateThemeTab:Input({
+    Title = "Theme Name",
+    Value = currentThemeName,
+    Callback = function(name)
+        currentThemeName = name
+    end
+})
+
+Tabs.CreateThemeTab:Colorpicker({
+    Title = "Background Color",
+    Default = Color3.fromHex(ThemeAccent),
+    Callback = function(color)
+        ThemeAccent = color:ToHex()
+    end
+})
+
+Tabs.CreateThemeTab:Colorpicker({
+    Title = "Outline Color",
+    Default = Color3.fromHex(ThemeOutline),
+    Callback = function(color)
+        ThemeOutline = color:ToHex()
+    end
+})
+
+Tabs.CreateThemeTab:Colorpicker({
+    Title = "Text Color",
+    Default = Color3.fromHex(ThemeText),
+    Callback = function(color)
+        ThemeText = color:ToHex()
+    end
+})
+
+Tabs.CreateThemeTab:Colorpicker({
+    Title = "Placeholder Text Color",
+    Default = Color3.fromHex(ThemePlaceholderText),
+    Callback = function(color)
+        ThemePlaceholderText = color:ToHex()
+    end
+})
+
+Tabs.CreateThemeTab:Button({
+    Title = "Update Theme",
+    Callback = function()
+        updateTheme()
+    end
+})
