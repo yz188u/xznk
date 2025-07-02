@@ -50,7 +50,7 @@ local Window = WindUI:CreateWindow({
     Theme = "Dark",
 
     --Background = "rbxassetid://13511292247", -- rbxassetid only
-    HasOutline = false
+    HasOutline = false,
     },
 })
 
