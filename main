@@ -46,11 +46,7 @@ local Window = WindUI:CreateWindow({
     Author = "Zuya",
     Folder = "XZuyaX's Hub",
     Size = UDim2.fromOffset(435, 345),
-    Transparent = true,
-    Theme = "Dark",
-
-    --Background = "rbxassetid://13511292247", -- rbxassetid only
-    HasOutline = false,
+    Transparent = true
 })
 
 local Tabs = {
@@ -62,7 +58,7 @@ local Tabs = {
     EventTab = Window:Tab({ Title = "Event", Icon = "gift", Desc = "this is just a trigger to open the event menu." }),
     VisualTab = Window:Tab({ Title = "Visual", Icon = "scan-eye", Desc = "not too important." }),
     b = Window:Divider(),
- l   ServerTab = Window:Tab({ Title = "Server", Icon = "server", Desc = "Subscribe to XZuyaX! " }),
+    ServerTab = Window:Tab({ Title = "Server", Icon = "server", Desc = "Subscribe to XZuyaX! " }),
     WindowTab = Window:Tab({ Title = "Window and File Configuration", Icon = "settings", Desc = "Manage window settings and file configurations." }),
     CreateThemeTab = Window:Tab({ Title = "Create Theme", Icon = "palette", Desc = "Design and apply custom themes." }),
     be = Window:Divider(),
